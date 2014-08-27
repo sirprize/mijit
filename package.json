@@ -1,12 +1,12 @@
 {
 	"name": "mijit",
-	"version":"1.9.0dev",
+	"version":"1.11.0-pre",
 	"directories": {
 		"lib": "."
 	},
 	"main":"main",
 	"dependencies": {
-		"dojo": "1.9.0dev"
+		"dojo":"1.11.0-pre"
 	},
 	"description": "Micro Dijit - Just the basic widget infrastructure components",
 	"licenses": [

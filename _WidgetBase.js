@@ -67,6 +67,15 @@ define([
 		};
 	}
 
+	function isEqual(a, b){
+		//	summary:
+		//		Function that determines whether two values are identical,
+		//		taking into account that NaN is not normally equal to itself
+		//		in JS.
+
+		return a === b || (/* a is NaN */ a !== a && /* b is NaN */ b !== b);
+	}
+
 	var _WidgetBase = declare("dijit._WidgetBase", [Stateful, Destroyable], {
 		// summary:
 		//		Future base class for all Dijit widgets.
@@ -863,7 +872,7 @@ define([
 			//		registered with watch() if the value has changed.
 			var oldValue = this[name];
 			this[name] = value;
-			if(this._created && value !== oldValue){
+			if(this._created && !isEqual(oldValue, value)){
 				if(this._watchCallbacks){
 					this._watchCallbacks(name, oldValue, value);
 				}
@@ -1087,7 +1096,7 @@ define([
 			return this.focus && (domStyle.get(this.domNode, "display") != "none");
 		},
 
-		placeAt: function(/* String|DomNode|_Widget */ reference, /* String|Int? */ position){
+		placeAt: function(/*String|DomNode|DocumentFragment|dijit/_WidgetBase*/ reference, /*String|Int?*/ position){
 			// summary:
 			//		Place this widget somewhere in the DOM based
 			//		on standard domConstruct.place() conventions.
@@ -1096,7 +1105,7 @@ define([
 			//		shorthand mechanism to put an existing (or newly created) Widget
 			//		somewhere in the dom, and allow chaining.
 			// reference:
-			//		Widget, DOMNode, or id of widget or DOMNode
+			//		Widget, DOMNode, DocumentFragment, or id of widget or DOMNode
 			// position:
 			//		If reference is a widget (or id of widget), and that widget has an ".addChild" method,
 			//		it will be called passing this widget instance into that method, supplying the optional
@@ -1133,7 +1142,7 @@ define([
 				// "reference" is a plain DOMNode, or we can't use refWidget.addChild().   Use domConstruct.place() and
 				// target refWidget.containerNode for nested placement (position==number, "first", "last", "only"), and
 				// refWidget.domNode otherwise ("after"/"before"/"replace").  (But not supported officially, see #14946.)
-				var ref = refWidget ?
+				var ref = refWidget && ("domNode" in refWidget) ?
 					(refWidget.containerNode && !/after|before|replace/.test(position || "") ?
 						refWidget.containerNode : refWidget.domNode) : dom.byId(reference, this.ownerDocument);
 				domConstruct.place(this.domNode, ref, position);
